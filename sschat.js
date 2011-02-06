@@ -12,13 +12,15 @@ $(document).ready(function(){
 					listener();
 					nickname = $('#sschat_input').val();
 					nickname = nickname.replace(/[^-a-z0-9]/ig,'');
-					serverSend('<span class="notice">'+nickname+' has entered the chatroom</span>');
-					$('#sschat_hint').html('Type a line of chat and press enter to speak:');
+					$('#sschat_input').attr('disabled', 'disabled');
+					$.post(sschat_serverurl+'sschat.php', {action: 'join', nickname: nickname, channel: sschat_channel}, function(data){
+						$('#sschat_input').val('');
+						$('#sschat_input').attr('disabled', '');
+						$('#sschat_hint').html('Type a line of chat and press enter to speak:');
+					});
 				}
 			} else {
 				var sendline = $('#sschat_input').val();
-				sendline = sendline.replace(/<\/?[a-z][a-z0-9]*[^<>]*>/ig, '');
-				sendline = linkify(sendline);
 				if (sendline != '') {
 					$('#sschat_input').attr('disabled', 'disabled');
 					$('#sschat_input').val('sending...');
@@ -30,21 +32,21 @@ $(document).ready(function(){
 	
 	$(window).bind("beforeunload", function(){
 		if (nickname != '') {
-			serverSend('<span class="notice">'+nickname+' has left the chatroom</span>');
+			$.post(sschat_serverurl+'sschat.php', {action: 'part', nickname: nickname, channel: sschat_channel});
 		}
 	});
 });
 
 function serverSend(sendtext) {
-	$.post(serverurl+'sschat.php', {action: 'send', text: sendtext}, function(data){
+	$.post(sschat_serverurl+'sschat.php', {action: 'send', text: sendtext, channel: sschat_channel}, function(data){
 		$('#sschat_input').val('');
 		$('#sschat_input').attr('disabled', '');
 	});
 }
 
 function listener() {
-	$.post(serverurl+'sschat.php', {action: 'listen'}, function(data){
-		$('#sschat_lines ul').append(data);
+	$.post(sschat_serverurl+'sschat.php', {action: 'listen', channel: sschat_channel}, function(data){
+		$('#sschat_lines ul').append(linkify(data));
 		$('#sschat_lines').scrollTop($('#sschat_lines')[0].scrollHeight);
 		listener();
 	});

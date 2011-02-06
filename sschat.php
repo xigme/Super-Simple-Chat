@@ -1,5 +1,6 @@
 <?php
 
+/* List of emoticons to search and replace */
 $smileys = Array(
 	':)'=>'smile',
 	':-)'=>'smile',
@@ -69,32 +70,59 @@ $smileys = Array(
 	'^-^'=>'kiki'
 );
 
+/* If magic quotes is enabled, remove slashes from POSTed data */
 if (get_magic_quotes_gpc()):
 	foreach ($_POST as $key=>$val):
 		$_POST[$key] = stripslashes($val);
 	endforeach;
 endif;
 
-if ($_POST['action'] == 'send'):
+/* Make channel names safe, as they are used as filenames later */
+if (isset($_POST['channel'])):
+	$_POST['channel'] = preg_replace("/[^a-z0-9]/i", '', $_POST['channel']);
+endif;
+
+if ($_POST['action'] == 'join'):
+	/* User has joined a channel */
+	$_POST['nickname'] = substr(strip_tags($_POST['nickname']), 0, 16);
+	writeLine($_POST['channel'], '<span class="notice">'.$_POST['nickname'].' has entered the chatroom</span>');
+elseif ($_POST['action'] == 'send'):
+	/* User is saying something */
+	$_POST['text'] = strip_tags($_POST['text']);
 	foreach ($smileys as $smiley=>$image):
 		$_POST['text'] = str_replace($smiley, '<img src="emoticons/'.$image.'.png" class="sschat_emoticon">', $_POST['text']);
 	endforeach;
-	$fp = fopen('history.txt', 'a');
-	fwrite($fp, $_POST['text']."\n");
-	fclose($fp);
+	writeLine($_POST['channel'], $_POST['text']);
 elseif ($_POST['action'] == 'listen'):
-	$stat = stat('history.txt');
-	$lastsize = intval($stat['size']);
+	/* User is waiting for next line of chat */
+	if ($stat = @stat('channel/'.$_POST['channel'].'.txt')):
+		$lastsize = intval($stat['size']);
+	else:
+		/* Channel doesn't exist, so create it */
+		writeLine($_POST['channel'], '<span class="notice">Channel created</span>');
+		$lastsize = 0;
+	endif;
 	while (1):
 		usleep(100000);
 		clearstatcache();
-		$stat = stat('history.txt');
+		$stat = stat('channel/'.$_POST['channel'].'.txt');
 		if (intval($stat['size']) > $lastsize):
-			$lines = file('history.txt');
+			$lines = file('channel/'.$_POST['channel'].'.txt');
 			echo '<li>'.$lines[sizeof($lines)-1].'</li>';
 			die();
 		endif;
 		$counter++;
 	endwhile;
+elseif ($_POST['action'] == 'part'):
+	/* User is leaving */
+	writeLine($_POST['channel'], '<span class="notice">'.$_POST['nickname'].' has left the chatroom</span>');
 endif;
+
+/* Add line to channel history for other users to see */
+function writeLine($room, $text)
+{
+	$fp = fopen('channel/'.$room.'.txt', 'a');
+	fwrite($fp, $text."\n");
+	fclose($fp);
+}
 ?>

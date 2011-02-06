@@ -1,10 +1,10 @@
 ===========================================================================
 ---------------------------------------------------------------------------
-                          SUPER SIMPLE CHAT v1.1                           
+                          SUPER SIMPLE CHAT v1.2                           
 ---------------------------------------------------------------------------
 ===========================================================================
 
-Welcome to Super Simple Chat v1.1! Please read this document carefully for 
+Welcome to Super Simple Chat v1.2! Please read this document carefully for 
 installation instructions and known issues. If you fix a bug or find an issue 
 please visit the GitHub repository at:
     https://github.com/xigme/Super-Simple-Chat
@@ -22,25 +22,26 @@ please visit the GitHub repository at:
                          ========================
 
  1) Unpack this directory on publically available webspace
- 2) Edit 'demo.html' and set the server address Javascript variable
- 3) Set 'history.txt' to be writable by the web server
+ 2) Edit 'demo.html' and set the server address Javascript variable, and
+    the name of the channel
+ 3) Set the directory 'channel' to be writable by the web server
  4) Open 'demo.html' chat window and start talking!
 
 
                           /^---RELEASE-NOTES--^\
                          ========================
 
- * Chat now blocks all HTML tags from input
- * Emoticons supported
- * URLs automatically linked in new window
- * Better styling for chat lines
+ * HTML blocking now server-side for security
+ * Multi-channel support for busy websites
+ * More robust messaging
+ * Limit to the length of nicknames
 
 
                           /^--KNOWN-PROBLEMS--^\
                          ========================
 
+ * Emoticons interfere with hyperlinks
  * No method to ban people who abuse the system
- * HTML tag block is client-side, as such a security hole
  * Multiple users can have the same name (spoof users)
  * Not tested in web browsers - may not work for all users
  * Server may slow down with heavy usage
