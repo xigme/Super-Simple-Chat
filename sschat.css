@@ -1,0 +1,54 @@
+#sschat {
+	border: #ccc 1px solid;
+	width: 250px;
+	font-family: Arial, sans-serif;
+	font-size: 12px;
+}
+
+#sschat_lines {
+	height: 300px;
+	overflow-y: scroll;
+}
+
+#sschat_lines ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+#sschat_lines li {
+	margin: 0;
+	padding: 2px 8px;
+	border-bottom: #999 1px solid;
+}
+
+#sschat_lines li:nth-child(odd) { background-color:#eee; }
+#sschat_lines li:nth-child(even) { background-color:#fff; }
+
+#sschat_lines .notice {
+	font-weight: bold;
+	color: #3c3;
+}
+
+#sschat_lines .nick {
+	font-weight: bold;
+}
+
+#sschat_hint {
+	font-size: 11px;
+	text-align: center;
+	margin: 0;
+}
+
+#sschat_entry {
+	margin: 5px 10px 5px 5px;
+}
+
+#sschat_input {
+	width: 100%;
+	padding: 0;
+}
+
+.sschat_emoticon {
+	margin-bottom: -3px;
+}
